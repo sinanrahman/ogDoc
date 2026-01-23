@@ -1,5 +1,5 @@
-const routes = require('express').Router
-
+const routes = require('express').Router()
+const { getBlog,addBlog } = require('../controllers/blogController')
 routes
     .route('/viewblog/:slug')
     .get(getBlog)

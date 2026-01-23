@@ -4,6 +4,7 @@ import { Editor, Node, Transforms, createEditor } from 'slate'
 import { withHistory } from 'slate-history'
 import { Editable, Slate, useSlate, withReact } from 'slate-react'
 import { Button, Icon, Toolbar } from './components'
+import axios from 'axios'
 
 // --- CONSTANTS ---
 const HOTKEYS = {
@@ -56,16 +57,35 @@ const initialValue = [
 const CreatePost = () => {
   // 1. Local state to track changes for the Save button
   const [value, setValue] = useState(initialValue)
+
+  const [title, setTitle] = useState('')
+
   
   const renderElement = useCallback(props => <Element {...props} />, [])
   const renderLeaf = useCallback(props => <Leaf {...props} />, [])
   const editor = useMemo(() => withHistory(withReact(createEditor())), [])
 
   // 2. Handle Save
-  const handleSave = () => {
-    console.log("Saved Blog Content:", value)
-    alert("Check the console for the JSON object!") 
+
+const handleSave = async () => {
+  try {
+    const res = await axios.post(
+      'http://localhost:3000/api/postblog',
+      {
+        title,
+        content: value
+      }
+    )
+
+    alert('Blog published 🎉')
+    console.log(res.data)
+
+  } catch (error) {
+    console.error(error)
+    alert('Failed to publish blog ❌')
   }
+}
+
 
   return (
     <div className="max-w-4xl mx-auto my-10 border rounded-xl shadow-lg bg-white overflow-hidden">
@@ -80,6 +100,14 @@ const CreatePost = () => {
           Save
         </button>
       </div>
+
+<input
+  type="text"
+  placeholder="Post title"
+  value={title}
+  onChange={e => setTitle(e.target.value)}
+  className="w-full px-4 py-3 text-xl font-semibold border-b focus:outline-none"
+/>
 
       {/* Editor */}
       <Slate 
