@@ -46,7 +46,11 @@ exports.getBlog = async (req, res) => {
 
   } catch (err) {
     console.error("ERROR:", err)
-    res.status(500).json({ success: false })
+    res.status(500).json({ 
+      success: false,
+      message:'the error is server error',
+      error:err 
+    })
   }
 }
 
