@@ -7,9 +7,10 @@ const port = process.env.PORT || 3000
 const app = express()
 
 app.use(cors({
-    origin:process.env.FRONTEND_URL,
-    credential:true
+  origin: process.env.FRONTEND_URL,
+  credentials: true
 }))
+
 app.use(express.urlencoded())
 app.use(express.json())
 const blog = require('./routes/blogRoutes')

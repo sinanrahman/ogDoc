@@ -5,7 +5,7 @@ const router = express.Router();
 const { getBlog, addBlog } = require("../controllers/blogController");
 
 // Blog routes
-router.get("/viewblog/:slug", getBlog);
+router.get("/findblog/:slug", getBlog)
 router.post("/postblog", addBlog);
 
 // Google auth route
