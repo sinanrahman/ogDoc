@@ -1,9 +1,8 @@
 
 import express from "express";
 import { googleLogin } from "../controllers/auth.controller.js";
-
 const router = express.Router();
-
+const { getBlog,addBlog } = require('../controllers/blogController')
 routes
     .route('/viewblog/:slug')
     .get(getBlog)
