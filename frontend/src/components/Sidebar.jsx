@@ -35,7 +35,12 @@ export const Sidebar = () => {
   };
 
   return (
-    <CSidebar className="border-end h-screen bg-slate-400" unfoldable>
+  <CSidebar className="
+  h-screen
+  bg-white dark:!bg-slate-900
+  border-r border-slate-200 dark:border-slate-800
+"unfoldable>
+
       <CSidebarHeader className="border-bottom">
         <CSidebarBrand>
           <img src="/images/Logo.png" alt="Blogify" />
@@ -43,7 +48,7 @@ export const Sidebar = () => {
       </CSidebarHeader>
 
       <CSidebarNav>
-        <CNavTitle>BLOGIFY</CNavTitle>
+        <CNavTitle className='!text-white'>BLOGIFY</CNavTitle>
 
         <CNavItem>
           <NavLink to="/home" className="nav-link">
