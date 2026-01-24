@@ -18,7 +18,7 @@ export const Sidebar = () => {
     <CSidebar className="border-end !border-r !border-slate-800 h-screen !bg-slate-900" unfoldable>
       <CSidebarHeader className="border-bottom">
         <CSidebarBrand>
-            <CIcon icon={cilFootball} height={32} />
+            <img src="/images/Logo.png" alt="" />
         </CSidebarBrand>
       </CSidebarHeader>
 
