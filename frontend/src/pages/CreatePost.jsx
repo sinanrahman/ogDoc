@@ -5,6 +5,7 @@ import { withHistory } from 'slate-history'
 import { Editable, Slate, useSlate, withReact } from 'slate-react'
 import { Button, Icon, Toolbar } from './components'
 import axios from 'axios'
+import api from '../api/axios'
 
 // --- CONSTANTS ---
 const HOTKEYS = {
