@@ -137,7 +137,7 @@ const CreatePost = () => {
         {/* Added specific dark background #1e293b (Slate 800) */}
         <div className="bg-white dark:bg-[#1e293b] rounded-2xl shadow-xl shadow-slate-200/50 dark:shadow-none border border-slate-200 dark:border-slate-800 transition-colors duration-500">
           
-          <div className="p-8 sm:p-12 min-h-[80vh]">
+          <div className="p-8 sm:p-12 min-h-[80vh] dark:bg-slate-800 rounded-2xl">
             
             {/* Title Input */}
             <input
@@ -145,8 +145,9 @@ const CreatePost = () => {
               placeholder="Title..."
               value={title}
               onChange={e => setTitle(e.target.value)}
-              className="w-full mb-8 font-['Outfit',_sans-serif] text-4xl md:text-5xl h1 font-bold bg-transparent border-none focus:outline-none focus:ring-0 p-0
-              text-slate-900 dark:text-slate-100 placeholder:text-slate-300 dark:placeholder:text-slate-600 mb-3"
+              style={{fontSize:'2rem'}}
+              className="w-full mb-8 font-['Outfit',_sans-serif] text-lg md:text-5xl font-bold bg-transparent border-none focus:outline-none focus:ring-0 p-0
+              text-slate-700 placeholder:text-slate-300 dark:placeholder:text-slate-600 mb-3 dark:text-slate-300"
               autoFocus
             />
 
@@ -155,6 +156,7 @@ const CreatePost = () => {
               editor={editor} 
               initialValue={initialValue} 
               onChange={newValue => setValue(newValue)}
+              className='dark:bg-slate-800'
             >
               {/* Sticky Toolbar with Blur */}
               <div className="sticky top-0 z-10 bg-white/95 dark:bg-[#1e293b]/95 backdrop-blur-sm transition-colors duration-500 d-flex justify-content-center align-items-center rounded mb-5">
@@ -180,7 +182,7 @@ const CreatePost = () => {
 
               <Editable
                 // Explicitly setting text color here ensures it applies even if Leaf doesn't catch it
-                className="focus:outline-none min-h-[400px] text-lg leading-relaxed text-slate-800 text-secondary"
+                className="focus:outline-none min-h-[400px] text-lg leading-relaxed text-slate-800 text-secondary dark:bg-slate-700 rounded-lg p-1"
                 renderElement={renderElement}
                 renderLeaf={renderLeaf}
                 placeholder="Tell your story..."
@@ -271,7 +273,7 @@ const Leaf = ({ attributes, children, leaf }) => {
         // If no special formatting, force the standard text color
         // Light Mode: text-slate-600
         // Dark Mode: text-slate-300 (Softer than slate-100)
-        !leaf.bold && !leaf.code ? "text-slate-600 dark:text-slate-800" : ""
+        !leaf.bold && !leaf.code ? "text-slate-600 dark:text-slate-200" : ""
       } 
       {...attributes}
     >

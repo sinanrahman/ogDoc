@@ -43,7 +43,7 @@ function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-[#0f172a] transition-colors duration-500 font-['Inter',_sans-serif]">
+    <div className="min-h-screen flex items-center justify-center bg-slate-300 dark:bg-[#0f172a] transition-colors duration-500 font-['Inter',_sans-serif]">
       <style>
         {`
           @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Outfit:wght@700;800&display=swap');
@@ -56,9 +56,9 @@ function Login() {
       </style>
 
       <div className="max-w-md w-full mx-6 p-[1px] bg-slate-200 dark:bg-slate-800 rounded-2xl">
-        <div className="bg-white dark:bg-[#1e293b] rounded-2xl p-10 py-14 shadow-2xl shadow-slate-200/50 dark:shadow-none text-center">
+        <div className="bg-slate-200 dark:bg-slate-800 rounded-2xl p-10 py-14 shadow-2xl shadow-slate-200/50 dark:shadow-none text-center">
           
-          <h1 className="font-['Outfit',_sans-serif] text-3xl font-bold text-slate-900 dark:text-slate-100 mb-2">
+          <h1 className="font-['Outfit',_sans-serif] text-3xl font-bold !text-slate-900 dark:!text-slate-300">
             Welcome Back
           </h1>
           
