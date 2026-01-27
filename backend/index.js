@@ -1,8 +1,8 @@
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
-const connectDB = require("./config/db"); // Ensure this file exports a function
-const mongoSanitize = require('express-mongo-sanitize')
+const connectDB = require("./config/db"); 
+// const mongoSanitize = require('express-mongo-sanitize') MONGO SANITIZE IS NOT WORKING WITH hpp
 
 const authRoutes = require("./routes/authRoutes");
 const blogRoutes = require("./routes/blogRoutes");
@@ -35,11 +35,16 @@ app.use(
   })
 );
 
-
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
-app.use(mongoSanitize())
+/*      MONGO-SANITIZE AND HPP IS NOT WORKING TOGETHER PROPERLY       */
+// app.use(
+//   mongoSanitize({
+//     allowDots: true,
+//     replaceWith: '_',
+//   })
+// );
 app.use(hpp())
 connectDB()
 
