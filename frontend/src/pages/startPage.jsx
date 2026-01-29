@@ -37,6 +37,8 @@ export default function StartPage() {
       <style>
         {`
           @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Outfit:wght@700;800&display=swap');
+          @import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css");
+
         `}
       </style>
 
@@ -51,7 +53,7 @@ export default function StartPage() {
         "
         aria-label="Toggle theme"
       >
-        {isDark ? "Light" : "Dark"}
+        {isDark ? <i className="bi bi-sun h3"></i> : <i className="bi bi-moon h3"></i>}
       </button>
 
       {/* HERO */}

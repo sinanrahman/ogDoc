@@ -117,6 +117,8 @@ export default function HomeFeed() {
       <style>
         {`
           @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Outfit:wght@700;800&display=swap');
+          @import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css");
+
           /* Global reset for link decorations */
           a { text-decoration: none !important; }
         `}
@@ -135,7 +137,9 @@ export default function HomeFeed() {
             onClick={() => setIsDark(!isDark)}
             className="text-[10px] uppercase tracking-[0.2em] font-bold text-slate-400 dark:text-slate-500 hover:text-slate-900 dark:hover:text-slate-100 transition-colors"
           >
-            {isDark ? "Light" : "Dark"}
+            {/* {isDark ? "Light" : "Dark"} */}
+        {isDark ? <i className="bi bi-sun h3"></i> : <i className="bi bi-moon h3"></i>}
+
           </button>
         </div>
       </nav>
