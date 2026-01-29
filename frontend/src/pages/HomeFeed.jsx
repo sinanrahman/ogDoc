@@ -73,6 +73,15 @@ export default function HomeFeed() {
   
   const [posts, setPosts] = useState([]); 
 
+  const deletePost = async(postId)=>{
+    try{
+      let res = await api.get(`/api/blog/deleteblog/${postId}`)
+      setPosts(posts.filter(item=>item._id != postId))
+    }catch(e){
+      console.log('error deleting post',e)
+    }
+  }
+
   useEffect(() => {
     // 2. Define the async function
     const fetchPosts = async () => {
@@ -117,6 +126,8 @@ export default function HomeFeed() {
       <style>
         {`
           @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Outfit:wght@700;800&display=swap');
+          @import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css");
+
           /* Global reset for link decorations */
           a { text-decoration: none !important; }
         `}
@@ -135,7 +146,9 @@ export default function HomeFeed() {
             onClick={() => setIsDark(!isDark)}
             className="text-[10px] uppercase tracking-[0.2em] font-bold text-slate-400 dark:text-slate-500 hover:text-slate-900 dark:hover:text-slate-100 transition-colors"
           >
-            {isDark ? "Light" : "Dark"}
+            {/* {isDark ? "Light" : "Dark"} */}
+        {isDark ? <i className="bi bi-sun h3"></i> : <i className="bi bi-moon h3"></i>}
+
           </button>
         </div>
       </nav>
@@ -151,18 +164,20 @@ export default function HomeFeed() {
           </p>
         </header>
 
-        <div className="grid grid-cols-3 gap-1">
+        <div className="grid md:grid-cols-2 sm:grid-cols-1 lg:grid-cols-3 gap-1">
           {posts.map((post) => (
             <a 
               key={post._id} 
               href={`https://shamil-tp.github.io/blog-Rendering-Library/?slug=${post.slug}`}
               className="group block relative p-3 rounded-[1rem] border border-slate-200/60 dark:border-slate-800/50 
                          bg-slate-100/50 dark:bg-[#1e293b]/30 hover:bg-white dark:hover:bg-[#1e293b]/60
-                         transition-all duration-300 w-[300px] mb-3"
+                         transition-all duration-300 w-[300px] mb-3 sm:w-full"
             >
               <div className="flex flex-col gap-2">
                 <div className="flex justify-between items-start gap-2">
+                  
                   <div className="space-y-3">
+                    
                     <p className="text-[10px] font-mono text-slate-400 dark:text-slate-500 uppercase tracking-tighter italic">
                       /{post.slug}
                     </p>
@@ -179,14 +194,17 @@ export default function HomeFeed() {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-4 text-xs font-medium text-slate-400 uppercase tracking-wider">
+                <div className="flex items-center justify-between gap-4 text-xs font-medium text-slate-400 uppercase tracking-wider">
                   <span className="text-slate-600 dark:text-slate-500">{post.author.name}</span>
+                  
                   <span className="w-1 h-1 rounded-full bg-slate-300 dark:bg-slate-700"></span>
                   <span>{new Date(post.createdAt).toLocaleDateString('en-US', {
   month: 'short',
   day: 'numeric', 
   year: 'numeric'
 }).toUpperCase()}</span>
+                <i class="bi bi-trash3" onClick={deletePost(post._id)}></i>
+                
                 </div>
               </div>
             </a>
