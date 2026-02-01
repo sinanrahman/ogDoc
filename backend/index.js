@@ -10,7 +10,7 @@ const blogRoutes = require("./routes/blogRoutes");
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-const cookieParser = require("cookie-parser");
+// const cookieParser = require("cookie-parser"); // Removed
 const helmet = require('helmet')
 const rateLimit = require('express-rate-limit')
 const hpp = require('hpp')
@@ -36,7 +36,7 @@ app.use(
 );
 
 app.use(express.json());
-app.use(cookieParser());
+// app.use(cookieParser()); // Removed as we are using Bearer tokens
 app.use(express.urlencoded({ extended: true }));
 /*      MONGO-SANITIZE AND HPP IS NOT WORKING TOGETHER PROPERLY       */
 // app.use(
