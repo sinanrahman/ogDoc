@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Responsive } from 'react-grid-layout';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
@@ -20,7 +20,7 @@ const useContainerWidth = () => {
             for (let entry of entries) {
                 if (entry.contentRect) {
                     const newWidth = Math.floor(entry.contentRect.width);
-                    // Threshold to prevent loops - slightly increased to 5px
+                    // Threshold to prevent loops
                     setWidth(prev => {
                         if (Math.abs(prev - newWidth) > 5) {
                             return newWidth;
@@ -43,37 +43,16 @@ const useContainerWidth = () => {
 
 
 const GridEditor = ({ widgets, setWidgets, readOnly = false }) => {
-    // Generate layout from widgets prop
-    // We treat 'widgets' as the single source of truth to avoid de-sync.
-    // We only use local state if we need intermediate drag states, 
-    // but RGL's 'layouts' prop can simpler be derived if we are careful.
-
-    // However, for smooth dragging, RGL usually needs a stable 'layouts' object.
-    const generatedLayout = useMemo(() => {
-        return widgets.map(w => ({
-            i: w.id,
-            x: w.layout.x,
-            y: w.layout.y,
-            w: w.layout.w,
-            h: w.layout.h,
-            minW: 2,
-            minH: 2
-        }));
-    }, [widgets]);
-
-    const [layouts, setLayouts] = useState({ lg: generatedLayout });
+    // SIMPLIfIED: Using data-grid approach. No local layouts state.
     const { width, ref: containerRef } = useContainerWidth();
 
-    // Sync state when props change (e.g. initial load, or external update)
-    useEffect(() => {
-        setLayouts({ lg: generatedLayout });
-    }, [generatedLayout]);
-
-    const handleLayoutChange = (currentLayout, allLayouts) => {
-        setLayouts(allLayouts);
+    const onLayoutChange = (layout) => {
+        // No-op for state. RGL manages visual state internally.
+        // We only care about the final result in onDragStop.
     };
 
     const onLayoutStop = (layout) => {
+        // Sync the new layout positions back to the main widgets state
         const updatedWidgets = widgets.map(w => {
             const l = layout.find(item => item.i === w.id);
             if (l) {
@@ -99,16 +78,15 @@ const GridEditor = ({ widgets, setWidgets, readOnly = false }) => {
     };
 
     return (
-        // FORCE OVERFLOW-Y SCROLL to prevent scrollbar toggle loop
         <div className="w-full min-h-[500px] overflow-x-hidden overflow-y-scroll" ref={containerRef}>
             <Responsive
                 className="layout min-h-[500px] rounded-xl"
-                layouts={layouts}
+                // No 'layouts' prop here
                 width={width}
                 breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
                 cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
                 rowHeight={30}
-                onLayoutChange={handleLayoutChange}
+                onLayoutChange={onLayoutChange}
                 onDragStop={onLayoutStop}
                 onResizeStop={onLayoutStop}
                 isDraggable={!readOnly}
@@ -119,7 +97,19 @@ const GridEditor = ({ widgets, setWidgets, readOnly = false }) => {
                 draggableHandle=".grid-drag-handle"
             >
                 {widgets.map(widget => (
-                    <div key={widget.id} className="relative group border border-transparent hover:border-slate-200 dark:hover:border-slate-700 rounded-lg transition-colors flex flex-col">
+                    <div
+                        key={widget.id}
+                        data-grid={{
+                            i: widget.id,
+                            x: widget.layout.x,
+                            y: widget.layout.y,
+                            w: widget.layout.w,
+                            h: widget.layout.h,
+                            minW: 2,
+                            minH: 2
+                        }}
+                        className="relative group border border-transparent hover:border-slate-200 dark:hover:border-slate-700 rounded-lg transition-colors flex flex-col"
+                    >
 
                         {!readOnly && (
                             <div className="absolute top-0 left-0 w-full h-6 z-50 opacity-0 group-hover:opacity-100 transition-opacity flex justify-between items-start px-1 pt-1 pointer-events-none">

@@ -10,12 +10,7 @@ const initialWidgets = [
     {
         id: 'init-1',
         type: 'text',
-        content: [
-            {
-                type: 'paragraph',
-                children: [{ text: 'Start writing your story here...' }],
-            },
-        ],
+        content: '<p>Start writing your story here...</p>',
         layout: { x: 0, y: 0, w: 12, h: 4 }
     }
 ]
@@ -72,13 +67,20 @@ const CreatePost = () => {
                 // MIGRATION / ADAPTER LOGIC
                 if (Array.isArray(loadedContent) && loadedContent.length > 0) {
                     if (loadedContent[0].layout && loadedContent[0].id) {
-                        setWidgets(loadedContent);
+                        // Widget format present. Ensure text content is string (Quill) not object (Slate)
+                        const fixedWidgets = loadedContent.map(w => {
+                            if (w.type === 'text' && typeof w.content === 'object') {
+                                return { ...w, content: '<p><em>(Legacy content format)</em></p>' };
+                            }
+                            return w;
+                        });
+                        setWidgets(fixedWidgets);
                     } else {
-                        // Migration
+                        // Old Slate JSON (pure array)
                         setWidgets([{
                             id: uuidv4(),
                             type: 'text',
-                            content: loadedContent,
+                            content: '<p><em>(Legacy Post Content)</em></p>',
                             layout: { x: 0, y: 0, w: 12, h: 20 }
                         }]);
                     }
@@ -101,7 +103,7 @@ const CreatePost = () => {
         const newWidget = {
             id: uuidv4(),
             type: 'text',
-            content: [{ type: 'paragraph', children: [{ text: '' }] }],
+            content: '', // Quill starts empty
             layout: { x: 0, y: Infinity, w: 12, h: 4 }
         };
         setWidgets([...widgets, newWidget]);
@@ -163,10 +165,28 @@ const CreatePost = () => {
 
 
     const handleSave = async () => {
+        if (!title.trim()) {
+            alert("Please enter a title for your post.");
+            return;
+        }
+
         try {
+            // Validate and Sanitize widgets
+            const sanitizedWidgets = widgets.map(w => ({
+                ...w,
+                layout: {
+                    ...w.layout,
+                    // JSON.stringify turns Infinity to null. RGL uses Infinity for "bottom".
+                    // We must convert it to a real number or let the backend handle it.
+                    // Assuming safe fallback to a large number if it's new.
+                    y: (w.layout.y === Infinity || w.layout.y === null) ? 999999 : w.layout.y
+                }
+            }));
+
+
             const payload = {
                 title,
-                content: widgets,
+                content: sanitizedWidgets,
             };
 
             if (isEditMode) {
@@ -178,8 +198,12 @@ const CreatePost = () => {
             }
             navigate("/home");
         } catch (error) {
-            alert("Error saving post");
             console.error(error);
+            if (error.response && error.response.status === 400) {
+                alert("Cannot save: " + JSON.stringify(error.response.data));
+            } else {
+                alert("Error saving post");
+            }
         }
     };
 
@@ -203,8 +227,6 @@ const CreatePost = () => {
                 </h2>
 
                 <div className="flex items-center gap-6">
-                    {/* Theme Toggle Removed - Handled Globally */}
-
                     <button
                         onClick={handleSave}
                         className="px-6 py-2 rounded bg-slate-900 dark:bg-slate-100 text-slate-50 dark:text-slate-900 text-xs uppercase tracking-widest font-bold hover:opacity-90 transition-all active:scale-95"
@@ -215,7 +237,6 @@ const CreatePost = () => {
             </nav>
 
             <div className="max-w-[1400px] mx-auto">
-                {/* Removed fixed background colors from container to allow global theme to show through if needed, though putting a card background is usually standard. Keeping basic card style but simplifying. */}
                 <div className="bg-white dark:bg-[#1e293b] rounded-2xl shadow-xl border border-slate-200 dark:border-slate-800 transition-colors duration-500 overflow-hidden">
 
                     <div className="p-4 sm:p-8 min-h-[80vh]">
