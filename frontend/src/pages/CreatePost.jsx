@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import api from '../api/axios'
 import axios from 'axios'
 import GridEditor from '../components/GridEditor/GridEditor'
+import ShareModal from '../components/ShareModal'
 import { v4 as uuidv4 } from 'uuid';
 
 const initialWidgets = [
@@ -44,6 +45,7 @@ const CreatePost = () => {
     const navigate = useNavigate();
     const isEditMode = Boolean(id);
     const [loading, setLoading] = useState(isEditMode);
+    const [shareOpen, setShareOpen] = useState(false);
 
     const [widgets, setWidgets] = useState(initialWidgets)
     const [title, setTitle] = useState('')
@@ -242,6 +244,14 @@ const CreatePost = () => {
                     >
                         {isDark ? <i className="bi bi-sun h3"></i> : <i className="bi bi-moon h3"></i>}
                     </button>
+                    {isEditMode && (
+                        <button
+                            onClick={() => setShareOpen(true)}
+                            className="px-4 py-2 rounded bg-blue-600 text-white text-xs uppercase tracking-widest font-bold hover:bg-blue-700 transition-all active:scale-95 flex items-center gap-2"
+                        >
+                            <i className="bi bi-share"></i> Share
+                        </button>
+                    )}
                     <button
                         onClick={handleSave}
                         className="px-6 py-2 rounded bg-slate-900 dark:bg-gray-600 text-slate-50 dark:text-white text-xs uppercase tracking-widest font-bold hover:opacity-90 transition-all active:scale-95"
@@ -311,6 +321,12 @@ const CreatePost = () => {
                     </div>
                 </div>
             </div>
+
+            <ShareModal 
+                open={shareOpen} 
+                onClose={() => setShareOpen(false)} 
+                docId={id || 'new-doc'}
+            />
         </div>
     )
 }
