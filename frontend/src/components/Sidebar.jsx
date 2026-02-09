@@ -35,17 +35,17 @@ export const Sidebar = () => {
   },[localStorage.getItem('theme')])
 
   return (
-    <CSidebar className="border-end h-screen" unfoldable colorScheme={theme} size='sm'>
-      <CSidebarHeader className="border-bottom d-flex justify-content-center align-items-center bg-secondary">
-        <CSidebarBrand className="sidebar-brand d-flex align-items-center gap-2">
+    <CSidebar className="border-end h-screen dark:bg-black dark:text-gray-400" unfoldable colorScheme={theme === 'dark' ? 'dark' : 'light'} size='sm'>
+      <CSidebarHeader className="border-bottom d-flex justify-content-center align-items-center dark:bg-black dark:border-gray-700">
+        <CSidebarBrand className="sidebar-brand d-flex align-items-center gap-2 dark:text-white">
   <CIcon icon={cilNotes} height={28} />
   <span className="brand-text">Blogify</span>
 </CSidebarBrand>
 
 
       </CSidebarHeader>
-      <CSidebarNav>
-        <CNavTitle>MENU</CNavTitle>
+      <CSidebarNav className="dark:bg-black">
+        <CNavTitle className="dark:text-gray-400">MENU</CNavTitle>
 
         <CNavItem>
           <NavLink to="/home" className="nav-link">
