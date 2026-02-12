@@ -45,7 +45,7 @@ const ShareModal = ({ open, onClose, docId }) => {
         </div>
 
         {/* Invite Section */}
-        <div className="mb-6">
+        {/* <div className="mb-6">
           <label className="text-sm text-slate-600 dark:text-gray-400 mb-2 block">
             Invite people
           </label>
@@ -54,7 +54,7 @@ const ShareModal = ({ open, onClose, docId }) => {
             placeholder="Add email address"
             className="w-full border border-slate-300 dark:border-gray-600 rounded px-3 py-2 text-sm bg-white dark:bg-gray-700 text-slate-900 dark:text-gray-200 placeholder:text-slate-400"
           />
-        </div>
+        </div> */}
 
         {/* Active Collaborators */}
         <div className="mb-6 pb-6 border-b border-slate-200 dark:border-gray-700">
