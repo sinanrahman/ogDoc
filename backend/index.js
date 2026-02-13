@@ -34,6 +34,7 @@ app.use(helmet({
 app.use(
 	cors({
 		origin: (origin, callback) => {
+			console.log("Incoming request from origin:", origin);
 			const allowedOrigins = [
 				"http://localhost:5173",
 				"http://localhost:5174",
@@ -43,20 +44,28 @@ app.use(
 				"https://ogdoc-1.onrender.com",
 			];
 
-			// Check if the origin matches any allowed origin (ignoring trailing slashes), Render regex, or ngrok
+			// Robust check for allowed origins
 			const isAllowed = !origin ||
-				allowedOrigins.some(ao => ao && ao.replace(/\/$/, '') === origin.replace(/\/$/, '')) ||
-				/^https:\/\/.*\.onrender\.com$/.test(origin) ||
-				/\.ngrok-free\.(app|dev)$/.test(origin);
+				allowedOrigins.some(ao => {
+					if (!ao) return false;
+					const normalizedAo = ao.replace(/\/$/, '').toLowerCase();
+					const normalizedOrigin = origin.replace(/\/$/, '').toLowerCase();
+					return normalizedAo === normalizedOrigin;
+				}) ||
+				/\.onrender\.com$/.test(origin) ||
+				/\.ngrok-free\.(app|dev)$/.test(origin) ||
+				/\.vercel\.app$/.test(origin);
 
 			if (isAllowed) {
 				callback(null, true);
 			} else {
-				console.log("CORS blocked origin:", origin);
+				console.error("❌ CORS block for origin:", origin);
 				callback(new Error('Not allowed by CORS'));
 			}
 		},
-		credentials: true
+		credentials: true,
+		methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+		allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
 	})
 );
 
