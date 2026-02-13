@@ -30,7 +30,14 @@ app.use(helmet())
 
 app.use(
 	cors({
-		origin: ["http://localhost:5173", "http://localhost:5174", "http://localhost:5175", process.env.FRONTEND_URL, process.env.LIBRARY_URL],
+		origin: [
+			"http://localhost:5173",
+			"http://localhost:5174",
+			"http://localhost:5175",
+			process.env.FRONTEND_URL,
+			"https://ogdoc-1.onrender.com",
+			/^https:\/\/.*\.onrender\.com$/  // Allow all Render subdomains
+		],
 		credentials: true
 	})
 );
@@ -39,6 +46,23 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(hpp())
 connectDB()
+
+// Health check endpoint
+app.get('/health', (req, res) => {
+	res.status(200).json({ status: 'ok', message: 'Server is running' });
+});
+
+// Root endpoint
+app.get('/', (req, res) => {
+	res.status(200).json({
+		message: 'ogDoc API Server',
+		version: '1.0.0',
+		endpoints: {
+			auth: '/api/auth',
+			blog: '/api/blog'
+		}
+	});
+});
 
 app.use("/api/auth", authRoutes);
 app.use("/api", blogRoutes);
