@@ -155,13 +155,13 @@ export default function HomeFeed() {
       <nav className="sticky top-0 z-50 w-full glass-card border-b border-slate-200/50 dark:border-white/5 mb-8">
         <div className="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
           <div className="flex items-center gap-2 group cursor-pointer" onClick={() => navigate('/home')}>
-           <div className="w-8 h-8 bg-slate-900 dark:bg-white rounded-lg flex items-center justify-center transform group-hover:rotate-12 transition-transform duration-300 shadow-lg dark:shadow-white/10 overflow-hidden">
-  <img
-    src="/images/Logo.png"
-    alt="Logo"
-    className="w-5 h-5 object-contain"
-  />
-</div>
+            <div className="w-8 h-8 bg-slate-900 dark:bg-white rounded-lg flex items-center justify-center transform group-hover:rotate-12 transition-transform duration-300 shadow-lg dark:shadow-white/10 overflow-hidden">
+              <img
+                src="/images/Logo.png"
+                alt="Logo"
+                className="w-5 h-5 object-contain"
+              />
+            </div>
             <h2 className="font-['Outfit',_sans-serif] text-xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100">
               ogDoc
             </h2>

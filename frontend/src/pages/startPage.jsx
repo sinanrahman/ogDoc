@@ -24,6 +24,7 @@ export default function StartPage() {
     }
   }, [isDark]);
 
+  
   return (
     <div className="min-h-screen relative overflow-hidden transition-all duration-700 bg-white dark:bg-black font-['Inter',_sans-serif]">
 

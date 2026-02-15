@@ -229,6 +229,7 @@ export default function Orb({
     let currentRot = 0;
     const rotationSpeed = 0.3;
 
+    
     const handleMouseMove = e => {
       const rect = container.getBoundingClientRect();
       const x = e.clientX - rect.left;

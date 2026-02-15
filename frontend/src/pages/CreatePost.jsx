@@ -251,6 +251,7 @@ const CreatePost = () => {
             }
         });
 
+        
         // Set local awareness state (name/color)
         const userData = JSON.parse(localStorage.getItem('user')) || {};
         awarenessInstance.setLocalStateField('user', {
