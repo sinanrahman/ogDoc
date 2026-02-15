@@ -251,10 +251,10 @@ exports.shareBlog = async (req, res) => {
     try {
       await sendEmail(email, subject, text, html);
     } catch (emailError) {
-      console.error("Failed to send email, but collaborator added:", emailError);
+      console.error("Detailed Email Error:", emailError);
       return res.status(200).json({
         success: true,
-        message: "Collaborator added, but email notification failed. Please ensure EMAIL_USER and EMAIL_PASS are set in .env"
+        message: `Collaborator added, but email failed: ${emailError.message}. Check your EMAIL_USER/PASS settings.`
       });
     }
 
