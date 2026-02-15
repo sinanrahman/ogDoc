@@ -623,6 +623,8 @@ const CreatePost = () => {
 
                         <input
                             readOnly={!canEdit}
+                            placeholder="Title..."
+                            value={title}
                             onChange={e => {
                                 if (!canEdit) return;
                                 const newTitle = e.target.value;
