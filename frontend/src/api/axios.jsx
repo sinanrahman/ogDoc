@@ -1,10 +1,13 @@
 import axios from "axios";
 import secureLocalStorage from "react-secure-storage";
 
+const baseURL = import.meta.env.VITE_BACKEND_URL || "http://192.168.29.93:5005";
+console.log("Axios initialized with baseURL:", baseURL);
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_BACKEND_URL,
-  withCredentials:true
-}); 
+  baseURL,
+  withCredentials: true
+});
 
 // Request Interceptor: Attach Access Token
 api.interceptors.request.use(
@@ -44,7 +47,7 @@ api.interceptors.response.use(
         console.log("Axios Interceptor: Sending Refresh Request...");
         const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/auth/refresh`, {
           refreshToken,
-        });
+        }, { withCredentials: true });
 
         console.log("Axios Interceptor: Refresh Successful. New Access Token received.");
         const { accessToken } = res.data;
