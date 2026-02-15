@@ -1,8 +1,19 @@
 const nodemailer = require('nodemailer');
 
 const sendEmail = async (to, subject, text, html) => {
+    console.log("Email Service Attempt:", {
+        user: process.env.EMAIL_USER ? "DETECTED" : "MISSING",
+        pass: process.env.EMAIL_PASS ? "DETECTED" : "MISSING"
+    });
+
+    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+        throw new Error("Missing EMAIL_USER or EMAIL_PASS environment variables");
+    }
+
     const transporter = nodemailer.createTransport({
-        service: 'gmail', // or use host/port if not gmail
+        host: 'smtp.gmail.com',
+        port: 465,
+        secure: true, // use SSL
         auth: {
             user: process.env.EMAIL_USER,
             pass: process.env.EMAIL_PASS,
