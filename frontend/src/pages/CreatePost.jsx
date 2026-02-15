@@ -224,6 +224,8 @@ const CreatePost = () => {
         const widgetsArray = doc.getArray('widgets');
         setYWidgets(widgetsArray);
 
+        const yTitle = doc.getText('title');
+
         const awarenessInstance = new Awareness(doc);
         setAwareness(awarenessInstance);
 
@@ -236,6 +238,11 @@ const CreatePost = () => {
         socket.on("doc:sync", (update) => {
             console.log("Received doc:sync, applying update...");
             Y.applyUpdate(doc, new Uint8Array(update), 'server');
+
+            // If local title is empty but Yjs title has content, update local state
+            if (title === '' && yTitle.toString() !== '') {
+                setTitle(yTitle.toString());
+            }
         });
 
         socket.on("doc:update", (update) => {
@@ -264,6 +271,7 @@ const CreatePost = () => {
             }
         });
 
+        
         // Set local awareness state (name/color)
         const userData = JSON.parse(localStorage.getItem('user')) || {};
         awarenessInstance.setLocalStateField('user', {
@@ -288,11 +296,30 @@ const CreatePost = () => {
             setWidgets(widgetsArray.toArray());
         });
 
+        // Sync Title
+        yTitle.observe((event) => {
+            if (event.transaction.origin === 'local') return;
+            setTitle(yTitle.toString());
+        });
+
         return () => {
             doc.destroy();
             disconnectSocket(); // Re-connect if docId changes
         };
     }, [docId]);
+
+
+    // Initial sync from state to Yjs if Yjs is empty (e.g. first user to load doc)
+    useEffect(() => {
+        if (ydoc && title !== '') {
+            const yTitle = ydoc.getText('title');
+            if (yTitle.toString() === '') {
+                yTitle.doc.transact(() => {
+                    yTitle.insert(0, title);
+                }, 'local');
+            }
+        }
+    }, [title, ydoc]);
 
 
     // Helper to update both local state and Yjs array
@@ -583,7 +610,17 @@ const CreatePost = () => {
                             type="text"
                             placeholder="Title..."
                             value={title}
-                            onChange={e => setTitle(e.target.value)}
+                            onChange={e => {
+                                const newTitle = e.target.value;
+                                setTitle(newTitle);
+                                if (ydoc) {
+                                    const yTitle = ydoc.getText('title');
+                                    yTitle.doc.transact(() => {
+                                        yTitle.delete(0, yTitle.length);
+                                        yTitle.insert(0, newTitle);
+                                    }, 'local');
+                                }
+                            }}
                             style={{
                                 padding: "1rem",
                                 margin: "1rem",
