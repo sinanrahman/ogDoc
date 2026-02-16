@@ -65,6 +65,11 @@ const initSocket = (server) => {
       });
     });
 
+    // KICK
+    socket.on("doc:kick", ({ blogId, socketId }) => {
+      io.to(socketId).emit("doc:kicked");
+    });
+
     // ACCEPT
     socket.on("call:accept", ({ to, blogId }) => {
       io.to(to).emit("call:accepted", {

@@ -126,16 +126,14 @@ const CreatePost = () => {
         if (!ydoc) return;
         const yTitle = ydoc.getText('title');
 
-        const observer = () => {
+        const observer = (event) => {
+            if (event.transaction.origin === 'local') return;
             const currentYTitle = yTitle.toString();
-            // Using functional update to avoid stale title in closure
-            setTitle(prev => {
-                if (prev !== currentYTitle) return currentYTitle;
-                return prev;
-            });
+            setTitle(currentYTitle);
         };
 
         yTitle.observe(observer);
+
         // Initial sync if title is already in ydoc
         const initialTitle = yTitle.toString();
         if (initialTitle && initialTitle !== title) {
@@ -292,6 +290,11 @@ const CreatePost = () => {
             setCollaborators(users);
         });
 
+        socket.on("doc:kicked", () => {
+            alert("You have been removed from this document by the author.");
+            navigate("/home");
+        });
+
         // Awareness events
         socket.on("doc:awareness", (update) => {
             applyAwarenessUpdate(awarenessInstance, new Uint8Array(update), 'server');
@@ -330,12 +333,6 @@ const CreatePost = () => {
         widgetsArray.observe((event) => {
             if (event.transaction.origin === 'local') return;
             setWidgets(widgetsArray.toArray());
-        });
-
-        // Sync Title
-        yTitle.observe((event) => {
-            if (event.transaction.origin === 'local') return;
-            setTitle(yTitle.toString());
         });
 
         return () => {
@@ -714,6 +711,13 @@ const CreatePost = () => {
                 open={shareOpen}
                 onClose={() => setShareOpen(false)}
                 docId={docId}
+                onlineUsers={collaborators}
+                currentSocketId={socket?.id}
+                onKick={(socketId) => {
+                    if (socket) {
+                        socket.emit("doc:kick", { blogId: docId, socketId });
+                    }
+                }}
             />
             {incomingCall && (
                 <IncomingCallModal
