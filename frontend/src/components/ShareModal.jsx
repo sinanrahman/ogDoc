@@ -1,30 +1,28 @@
 import React, { useState } from 'react';
 import api from '../api/axios';
 
-const ShareModal = ({ open, onClose, docId }) => {
+const ShareModal = ({ open, onClose, docId, onlineUsers = [], currentSocketId, onKick }) => {
   const [copied, setCopied] = useState(false);
   const [email, setEmail] = useState('');
   const [role, setRole] = useState('view');
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ text: '', type: '' });
   const [collaborators, setCollaborators] = useState([]);
+  const [blogData, setBlogData] = useState(null);
+
+  const currentUser = React.useMemo(() => JSON.parse(localStorage.getItem('user')), []);
 
   const isAuthor = React.useMemo(() => {
-    const user = JSON.parse(localStorage.getItem('user'));
-    return user && collaborators.find(c => c.isAuthor && c.email === user.email);
-  }, [collaborators]);
+    return currentUser && blogData && (blogData.author === currentUser._id || blogData.author?._id === currentUser._id);
+  }, [currentUser, blogData]);
 
   const fetchBlogDetails = React.useCallback(async () => {
     try {
       const res = await api.get(`/api/blog/${docId}`);
       if (res.data?.blog) {
         const blog = res.data.blog;
-        // Transform author and collaborators into a single list for management
-        const list = [
-          { email: 'Author', isAuthor: true, role: 'owner', name: 'Original Author' },
-          ...blog.collaborators.map(c => ({ ...c, isAuthor: false }))
-        ];
-        setCollaborators(list);
+        setBlogData(blog);
+        setCollaborators(blog.collaborators || []);
       }
     } catch (err) {
       console.error("Error fetching collaborators:", err);
@@ -137,15 +135,33 @@ const ShareModal = ({ open, onClose, docId }) => {
         </form>
 
         {/* PEOPLE WITH ACCESS */}
-        <div className="mb-8">
+        <div className="mb-6">
           <label className="text-sm font-semibold text-slate-700 dark:text-gray-300 mb-3 block">
             People with access
           </label>
           <div className="space-y-4 max-h-48 overflow-y-auto pr-2 custom-scrollbar">
-            {collaborators.map((c, i) => (
-              <div key={i} className="flex items-center justify-between group">
+            {/* Author */}
+            {blogData && (
+              <div className="flex items-center justify-between group">
                 <div className="flex items-center gap-3">
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-bold ${c.isAuthor ? 'bg-blue-100 text-blue-600' : 'bg-slate-100 text-slate-600'}`}>
+                  <div className="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900/40 flex items-center justify-center text-[10px] font-bold text-blue-600 dark:text-blue-400">
+                    A
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-xs font-semibold text-slate-900 dark:text-white truncate max-w-[150px]">
+                      Owner
+                    </p>
+                    <p className="text-[10px] text-slate-500 capitalize">Owner</p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Persistent Collaborators */}
+            {collaborators.map((c, i) => (
+              <div key={`collab-${i}`} className="flex items-center justify-between group">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-full bg-slate-100 dark:bg-gray-800 flex items-center justify-center text-[10px] font-bold text-slate-600 dark:text-gray-400">
                     {c.email[0].toUpperCase()}
                   </div>
                   <div className="min-w-0">
@@ -155,7 +171,7 @@ const ShareModal = ({ open, onClose, docId }) => {
                     <p className="text-[10px] text-slate-500 capitalize">{c.role}</p>
                   </div>
                 </div>
-                {!c.isAuthor && (
+                {isAuthor && (
                   <button
                     onClick={() => handleRemove(c.email)}
                     className="text-[10px] font-bold text-red-500 opacity-0 group-hover:opacity-100 transition-opacity hover:underline"
@@ -165,6 +181,33 @@ const ShareModal = ({ open, onClose, docId }) => {
                 )}
               </div>
             ))}
+
+            {/* Online Visitors (who are NOT persistent collaborators) */}
+            {onlineUsers
+              .filter(u => !collaborators.some(c => c.email === u.name || c.email === u.email)) // Rough filter
+              .map((u, i) => (
+                <div key={`online-${i}`} className="flex items-center justify-between group">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-full bg-green-100 dark:bg-green-900/20 flex items-center justify-center text-[10px] font-bold text-green-600 dark:text-green-400">
+                      {u.name[0].toUpperCase()}
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-xs font-semibold text-slate-900 dark:text-white truncate max-w-[150px]">
+                        {u.name} (Online)
+                      </p>
+                      <p className="text-[10px] text-slate-500">Visitor</p>
+                    </div>
+                  </div>
+                  {isAuthor && u.socketId !== currentSocketId && ( // Don't kick self
+                    <button
+                      onClick={() => onKick && onKick(u.socketId)}
+                      className="text-[10px] font-bold text-orange-500 opacity-0 group-hover:opacity-100 transition-opacity hover:underline"
+                    >
+                      Kick
+                    </button>
+                  )}
+                </div>
+              ))}
           </div>
         </div>
 
